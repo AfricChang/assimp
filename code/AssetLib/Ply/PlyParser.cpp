@@ -3,8 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2024, assimp team
-
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -301,7 +300,9 @@ bool PLY::Element::ParseElement(IOStreamBuffer<char> &streamBuffer, std::vector<
         // the original string identifier
         pOut->szName = std::string(&buffer[0], &buffer[0] + strlen(&buffer[0]));
         auto pos = pOut->szName.find_last_of(' ');
-        pOut->szName.erase(pos, pOut->szName.size());
+        if (pos != std::string::npos) {
+            pOut->szName.erase(pos, pOut->szName.size());
+        }
     }
 
     if (!PLY::DOM::SkipSpaces(buffer))

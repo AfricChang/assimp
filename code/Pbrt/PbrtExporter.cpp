@@ -2,7 +2,7 @@
 Open Asset Import Library (assimp)
 ----------------------------------------------------------------------
 
-Copyright (c) 2006-2024, assimp team
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -93,7 +93,7 @@ void ExportScenePbrt(const char *pFile, IOSystem *pIOSystem, const aiScene *pSce
         const ExportProperties *) {
     std::string path = DefaultIOSystem::absolutePath(std::string(pFile));
     std::string file = DefaultIOSystem::completeBaseName(std::string(pFile));
-    path = path + file + ".pbrt";
+    
     // initialize the exporter
     PbrtExporter exporter(pScene, pIOSystem, path, file);
 }
@@ -132,10 +132,10 @@ PbrtExporter::PbrtExporter(
         0.f,  0.f,  1.f, 0.f, //
         0.f,  0.f,  0.f, 1.f  //
     ) * mRootTransform;
-    
+
     // Export embedded textures.
     create_embedded_textures_folder(mScene, mIOSystem);
-    
+
     for (unsigned int i = 0; i < mScene->mNumTextures; ++i) {
         aiTexture* tex = mScene->mTextures[i];
         std::string fn = CleanTextureFilename(tex->mFilename, false);
@@ -174,7 +174,13 @@ PbrtExporter::PbrtExporter(
     WriteWorldDefinition();
 
     // And write the file to disk...
-    std::unique_ptr<IOStream> outfile(mIOSystem->Open(mPath,"wt"));
+    std::string outputFilePath = mPath;
+    if (!outputFilePath.empty()) {
+        outputFilePath = outputFilePath + mIOSystem->getOsSeparator();
+    }
+    outputFilePath = outputFilePath + mFile +".pbrt";
+
+    std::unique_ptr<IOStream> outfile(mIOSystem->Open(outputFilePath,"wt"));
     if (!outfile) {
         throw DeadlyExportError("could not open output .pbrt file: " + std::string(mFile));
     }

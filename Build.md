@@ -4,7 +4,9 @@
 ### Install prerequisites
 You need to install
 * cmake
-* Your compiler
+* Your compiler (must support C++17 and C99 at least)
+* For Windows
+  *  DX-SDK 9 if you want to use our 3D-Viewer
 
 ### Get the source
 Make sure you have a working git-installation. Open a command prompt and clone the Asset-Importer-Lib via:
@@ -39,7 +41,7 @@ This will generate the project files for the visual studio. All dependencies use
 See <https://stackoverflow.com/questions/40803170/cmake-uwp-using-cmake-to-build-universal-windows-app>
 
 ### Build instructions for MinGW
- Older versions of MinGW's compiler (e.g. 5.1.0) do not support the -mbig_obj flag 
+ Older versions of MinGW's compiler (e.g. 5.1.0) do not support the -mbig_obj flag
 required to compile some of assimp's files, especially for debug builds.
 Version 7.3.0 of g++-mingw-w64 & gcc-mingw-w64 appears to work.
 

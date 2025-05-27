@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2024, assimp team
+Copyright (c) 2006-2025, assimp team
 
 All rights reserved.
 
@@ -354,9 +354,10 @@ ASSIMP_API const aiScene *aiApplyCustomizedPostProcessing(const aiScene *scene,
 void CallbackToLogRedirector(const char *msg, char *dt) {
     ai_assert(nullptr != msg);
     ai_assert(nullptr != dt);
-    LogStream *s = (LogStream *)dt;
-
-    s->write(msg);
+    LogStream *stream = (LogStream *)dt;
+    if (stream != nullptr) {
+        stream->write(msg);
+    }
 }
 
 static LogStream *DefaultStream = nullptr;
@@ -369,7 +370,7 @@ ASSIMP_API aiLogStream aiGetPredefinedLogStream(aiDefaultLogStream pStream, cons
     if (DefaultStream == nullptr) {
         DefaultStream = LogStream::createDefaultStream(pStream, file);
     }
-    
+
     if (!DefaultStream) {
         sout.callback = nullptr;
         sout.user = nullptr;
@@ -415,6 +416,10 @@ ASSIMP_API aiReturn aiDetachLogStream(const aiLogStream *stream) {
     }
     DefaultLogger::get()->detachStream(it->second);
     delete it->second;
+
+    if ((Assimp::LogStream *)stream->user == DefaultStream) {
+        DefaultStream = nullptr;
+    }
 
     gActiveLogStreams.erase(it);
 
